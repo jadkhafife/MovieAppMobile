@@ -2,53 +2,88 @@ import React from 'react'
 import {View, Image, Text, StyleSheet} from 'react-native'
 import {getImagefromTmdbApi} from '../Apitmdb/api'
 
-function FilmCard({original_title, poster_path, vote_average, release_date, overview}) {
+function FilmCard(props) {
   return (
-    <View>
-      <Image style={styles.image_style} source={getImagefromTmdbApi(poster_path)}>
-
+    <View style={styles.container}>
+      <Image style={styles.image} source={{
+            uri: getImagefromTmdbApi(props.poster_path)
+          ,}}>
       </Image>
-      <View style={styles.container_style}>
-          <View style={styles.header_style}>
-              <Text style={styles.title_style}>{original_title}</Text>
-              <Text style={styles.vote_style}>{vote_average}</Text>
+      <View style={styles.detailscontainer}>
+          <View style={styles.header}>
+              <Text style={styles.title}>{props.original_title}</Text>
+              <Text style={styles.vote}>{props.vote_average}</Text>
           </View>
-          <View style={{flex:6}}>
-              <Text style={{fontStyle:"italic", flex:1, flexWrap:"wrap"}}>{overview}</Text>
-          </View>
-          <View style={{flex:4}}>
-              <Text style={{textAlign:"right"}}>{release_date}</Text>
-          </View>
+              <Text style={styles.description}>{props.overview}</Text>
+              <Text style={styles.date}>{props.release_date}</Text>
       </View>
     </View>
   )
 }
 const styles = StyleSheet.create({
-  globalContainer_style:{
-      flexDirection:'row',
-      height:140,        
-  },
-  image_style:{
-      height:140,
-      width:120,
-      margin:10
-  },
-  container_style:{
-      flex:4,
-  },
-  header_style:{
-      flex:3,
-      flexDirection:'row',
-  },
-  title_style:{
-      flex:1,
-      flexWrap:"wrap", //pour le retour a la ligne pour prendre l'espace nece
-      fontWeight:"bold",
-      fontSize:20
-  },
-  vote_style:{
-      fontSize:24
-  }
-  })
+    container:{
+        flexDirection:'row',
+        alignItems:'center',
+    },
+    image:{
+        width:100,
+        height:100,
+        marginRight:8,
+    },
+    detailscontainer:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center'
+    },
+    title:{
+        fontSize:20,
+        fontWeight:'bold',
+        flex:1,
+        flexWrap:'wrap',
+        marginRight:8,
+    },
+    vote:{
+        fontSize:18,
+    },
+    description:{
+        flexWrap:'wrap',
+        fontStyle:'italic',
+    },
+    date:{
+        flex:1,
+        textAlign:'right',
+    }
 
-export default FilmCard
+//   globalContainer_style:{
+//       flexDirection:'row',
+//       height:140,
+//   },
+//   image_style:{
+//       height:100,
+//       width:120,
+//   },
+//   container: {
+//     flexDirection: "column",
+//     backgroundColor: "#121212",
+//     borderTopColor: "white",
+//     borderTopWidth: 2,
+//   },
+//   header_style:{
+//       flex:3,
+//       flexDirection:'row',
+//   },
+//   banner: {
+//      width: 200,
+//      height: 200 
+//     },
+//   title_style:{
+//       flexWrap:"wrap", //pour le retour a la ligne pour prendre l'espace nece
+//       fontWeight:"bold",
+//       fontSize:20
+//   },
+//   vote_style:{
+//       fontSize:24
+//   }
+});
+
+export default FilmCard;
