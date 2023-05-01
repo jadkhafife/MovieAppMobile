@@ -9,7 +9,7 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-Apitmdb\api.js
+.Apitmdb/
 
 # macOS
 .DS_Store
