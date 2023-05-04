@@ -1,57 +1,110 @@
-import React from 'react';
-import {StyleSheet, View, Text, Image} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, Image, ScrollView } from 'react-native';
+import { getDetailsfromTmdbApi, getImagefromTmdbApi, getMovieVideosFromApi } from '../Apitmdb/api';
+import {Video} from 'expo-av';
 
-export default class FilmDetail extends React.Component {
-    render(){
-        return(
+function FilmDetail(props) {
+    const id = props.route.params.id;
+    const [film, setFilm] = useState([]);
+
+    useEffect(() => {
+        const getfilm = async () => {
+            try {
+                const res = await getDetailsfromTmdbApi(id);
+                console.log('res ::::::::::::', res); // Log the response object
+                if (res) {
+                    console.log('Setting film data: /////////////////////////', res);
+                    setFilm(res);
+                    console.log('FILLLLLLM : ', film);
+                }
+            } catch (error) {
+                console.log(error.message);
+            }
+        };
+        getfilm();
+    }, [id]);
+
+    console.log(film.title);
+    if (!film) {
+        return <Text>Chargement...</Text>;
+    } else {
+        return (
             <View style={styles.main_container}>
-                <View style={styles.container_style}>
-                    <View style={styles.image_container}>
-                        <Image style={styles.image_style} source={require('../assets/icon.png')}></Image>
+                <ScrollView>
+                    <View style={styles.container_style}>
+                        <Image
+                            style={styles.image_style}
+                            source={{ uri: getImagefromTmdbApi(film.poster_path) }}
+                        />
+                        <View style={styles.header_style}>
+                            <View style={styles.video_container}>
+                                <Video
+                                    source={{ uri: getMovieVideosFromApi(id) }}
+                                    style={styles.video_style}
+                                    controls={true}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                            <Text style={styles.title_style}>{film.title}</Text>
+                        </View>
+                        <View style={styles.description_style}>
+                            <Text style={styles.overview}>{film.overview}</Text>
+                            <Text style={styles.release_date}>
+                                Release date: {film.release_date}
+                            </Text>
+                            <Text style={styles.vote}>
+                                Vote average: {film.vote_average}
+                            </Text>
+                        </View>
                     </View>
-                    <View style={styles.header_style}>
-                        <Text style={styles.title_style}>Title</Text>
-                    </View>
-                    <View style={styles.description_style}>
-                        <Text style={{fontStyle:"italic"}}> Descriiiption</Text>
-                    </View>
-                </View>
+                </ScrollView>
             </View>
-        )
+        );
     }
 }
 
+export { FilmDetail };
 const styles = StyleSheet.create({
     main_container: {
-        flex: 5,
-        flexDirection: 'column',
-        height: 200,
+        flex: 1,
+        backgroundColor: '#649197',
     },
     container_style: {
-        flex: 2,
-        backgroundColor: 'grey',
-        // alignItems: 'center',
         padding: 20,
     },
-    image_style:{
-        height:200,
-        width:200,
-        alignSelf:'center',
-        borderRadius:10,
-        resizeMode:'center',
-        margin:30,
+    image_style: {
+        height: 400,
+        borderRadius: 10,
+        resizeMode: 'cover',
+        marginBottom: 20,
     },
     header_style: {
-        flex: 2,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
     },
     title_style: {
-        flex: 5,
-        flexWrap: 'wrap',
-        fontWeight: 'bold',
         fontSize: 30,
-        backgroundColor: 'green',
+        fontWeight: 'bold',
+        color: '#F5F5F5',
+        flexWrap: 'wrap',
+        flex: 1,
     },
-    description_style: {
-        flex: 3,
-    }
+    description_style: {},
+    overview: {
+        color: '#F5F5F5',
+        fontSize: 16,
+        marginBottom: 10,
+    },
+    release_date: {
+        color: '#900C3F',
+        fontSize: 16,
+        marginBottom: 10,
+    },
+    vote: {
+        color: '#FEC260',
+        fontSize: 16,
+        marginBottom: 10,
+    },
 });
